@@ -31,16 +31,20 @@ int mode = 0;
 const int neoPixelPin = 5;  // control pin
 const int pixelCount = 7;    // number of pixels
 
-const long baseColor[] = {4850, 225, 195};
+// HSV value to start with (as close to neutral "flame" as i can get)
+const long baseColor[] = {3950, 245, 77};
 
 unsigned long hue = baseColor[0];
 unsigned long color = 0;
 int sat = baseColor[1];
 int val = baseColor[2];
+
+//Used for rotary encoder control
 int hChange = 100;
 int svChange = 10;
 
-int valChange = 3;
+int valChange = 1; // Value step amount. Default to 1 for slow flickering flame. 
+int valDirection = 1;
 const int minVal = 55;
 const int maxVal = 235;
 const float directionChangeChance = .05;
@@ -80,7 +84,7 @@ void loop() {
   }
   strip.show();                       // refresh the strip
   
-  printHSV();
+  // printHSV();
   delay(5);
 }
 
@@ -127,22 +131,29 @@ void handleEncoderRotation() {
     } else if (mode == 1) {
       sat += (svChange * position);
     } else if (mode == 2) {
-      val += (svChange * position);
+      // val += (svChange * position); //change direct value
+      valChange += position;
+      Serial.print("Value change: ");
+      Serial.println(valChange);
     }
     encoder.reset();
+
+    printHSV();
   }
 }
 
 /* ---------- ANIMATION HANDLING ----------------*/
 bool randomlyChangeDirection() {
-  return (random(0, 99) / 100) < directionChangeChance;
+  float roll = random(99) / 100.00;
+  return (roll < directionChangeChance);
 }
 
 void fadeValue() {
-  if (val < minVal || val > maxVal) {
+  randomlyChangeDirection();
+  if (val < minVal || val > maxVal || randomlyChangeDirection()) {
     //Serial.print("changeDirection");
-    valChange = -valChange;
+    valDirection = -valDirection;
   }
 
-  val += valChange;
+  val += (valChange * valDirection);
 }
