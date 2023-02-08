@@ -15,8 +15,8 @@
 #include <Adafruit_NeoPixel.h>
 
 /* ---------- NEOPIXEL SETUP ----------------*/
-const int neoPixelPin = 8;  // control pin
-const int pixelCount = 10;    // number of pixels
+const int neoPixelPin = 1;  // control pin
+const int pixelCount = 7;    // number of pixels
 
 // HSV value to start with (as close to neutral "flame" as i can get)
 const long baseColor[] = {3950, 245, 77};
@@ -37,7 +37,7 @@ const int maxVal = 235;
 const float directionChangeChance = .05;
 
 // set up strip:
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(pixelCount, neoPixelPin, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(pixelCount, neoPixelPin, NEO_GRBW + NEO_KHZ800);
 
 
 void setup() {
@@ -49,13 +49,10 @@ void setup() {
   strip.begin();    // initialize pixel strip
   strip.clear();    // turn all LEDs off
   strip.show();     // Initialize all pixels
-  
 
 }
 
 void loop() {
-  // hue fades throug h the color spectrum, starting from red.
-  //printHSV();
   fadeValue();
 
   // loop over all the pixels:
