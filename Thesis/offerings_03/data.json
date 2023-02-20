@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "prompt": "text question",
+            "response": "text response"
+        },
+        {
+            "prompt": "Write about an ancestor",
+            "response": "My grandmother was 91"
+        },
+        {
+            "prompt": "What is a family member.",
+            "response": "when I was a little girl, I broke my two front teeth out while trying to do bicycle tricks. I was rushed to an emergency dentist and my grandmother cradled my head in her lap the entire way there."
+        }
+    ]
+}
