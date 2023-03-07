@@ -7,7 +7,7 @@
 /*** TODOS
  * [ ] Check WIFI standards for sending HTTP requests 
  * [ ] Map encoder positions to a color/value for Hue input 
- * [ ] Create a "send" function that only sends requests after certain delay 
+ * [x] Create a "send" function that only sends requests after certain delay 
  * [ ] Would be cool to use haptic feedback to tell you when you've hit the top/bottom. 
  * [ ] Choose whether to do a debounced hold-down-rotary-encoder control system
 */
@@ -92,12 +92,14 @@ void setup() {
 
 /*------------ Main Loop -----------*/
 void loop() {
+    handleButtonA();
+    handleButtonB();
     handleEncoderA();
     handleEncoderB();
 }
 
 /*------------ Handlers -----------*/
-void handleEncoderA() {
+void handleButtonA() {
     int buttonState = digitalRead(encoderA_buttonPin);
     if (buttonState != encoderA_lastButtonState) {
         delay(debounceDelay);
@@ -107,24 +109,9 @@ void handleEncoderA() {
         }
     }
     encoderA_lastButtonState = buttonState;
-
-    int position = encoderA.getPosition();
-    unsigned long now = millis();
-    encoderA.reset();
-
-    if (position != 0) {
-        encoderA_position += position;
-        Serial.print("A: ");
-        Serial.println(encoderA_position);
-        encoderA_lastChangeAt = now;
-    } else if ((now > (encoderA_lastChangeAt + sendDelay)) && (encoderA_position != encoderA_lastSentPosition)) { // should only send if encoder has stopped moving
-        Serial.print("SENDING A: ");
-        Serial.println(encoderA_position);
-        encoderA_lastSentPosition = encoderA_position;
-    }
 }
 
-void handleEncoderB() {
+void handleButtonB() {
     int buttonState = digitalRead(encoderB_buttonPin);
     if (buttonState != encoderB_lastButtonState) {
         delay(debounceDelay);
@@ -133,16 +120,40 @@ void handleEncoderB() {
             Serial.println(encoderB_position);
         }
     }
-
     encoderB_lastButtonState = buttonState;
+}
 
+void handleEncoderA() {
+    int position = encoderA.getPosition();
+    unsigned long now = millis();
+    encoderA.reset();
+
+    if (position != 0) {
+        encoderA_position += position; // Update global A position
+        Serial.print("A: ");
+        Serial.println(encoderA_position);
+        encoderA_lastChangeAt = now; // Log last change time
+    } else if ((now > (encoderA_lastChangeAt + sendDelay)) && (encoderA_position != encoderA_lastSentPosition)) { // Send only if change stable for .5 seconds
+        Serial.print("SENDING A: ");
+        Serial.println(encoderA_position);
+        encoderA_lastSentPosition = encoderA_position;  //  Log last send value
+    }
+}
+
+void handleEncoderB() {
     int position = encoderB.getPosition();
+    unsigned long now = millis();
     encoderB.reset();
 
     if (position != 0) {
         encoderB_position += position;
         Serial.print("B: ");
+        encoderB_lastChangeAt = now; // Log last change time
         Serial.println(encoderB_position);
+    } else if ((now > (encoderB_lastChangeAt + sendDelay)) && (encoderB_position != encoderB_lastSentPosition)) { // Send only if change stable for .5 seconds
+        Serial.print("SENDING B: ");
+        Serial.println(encoderB_position);
+        encoderB_lastSentPosition = encoderB_position;  //  Log last send value
     }
 }
 
