@@ -1,5 +1,16 @@
 #include <EncoderStepCounter.h>
+#include "secrets.h"
+#include <WiFiNINA.h>  //for Nano IOT 33
+#include <WiFiUdp.h>
 
+/*------------ Wifi Setup -----------*/
+
+// Define these in secrets.h
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
+
+WiFiUDP Udp;
+const unsigned int localPort = 8080;  // local port to listen for UDP packets (here's where we send the packets)
 
 /*------------ Encoder Setup -----------*/
 int debounceDelay = 5;
@@ -27,6 +38,7 @@ EncoderStepCounter encoderB(encoderB_pin1, encoderB_pin2);
 /*------------ Setup -----------*/
 void setup() {
   Serial.begin(9600);
+  if (!Serial) delay(3000);
   // Initialize encoder
   encoderA.begin();
   encoderB.begin();
@@ -38,6 +50,35 @@ void setup() {
   // set the button pin as an input_pullup:
   pinMode(encoderA_buttonPin, INPUT_PULLUP);
   pinMode(encoderB_buttonPin, INPUT_PULLUP);
+
+  //---- Connect to WiFi Network ----//
+
+  pinMode(LED_BUILTIN, OUTPUT); // Set Built-in LED to show wifi connected
+
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, pass);
+
+  while (WiFi.status() != WL_CONNECTED) { // Wait until connected to the WiFi
+    delay(300);
+    Serial.print(".");
+  }
+  Serial.println("");
+
+  // Print network connection to serial
+  digitalWrite(LED_BUILTIN, HIGH);
+  Serial.println("WiFi connected");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  Serial.println("Starting UDP");
+  Udp.begin(localPort);
+  Serial.print("Local port: ");
+
+  Serial.println(localPort);
 }
 
 /*------------ Main Loop -----------*/
