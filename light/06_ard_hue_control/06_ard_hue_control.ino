@@ -2,6 +2,7 @@
 #include "secrets.h"
 #include <WiFiNINA.h>  //for Nano IOT 33
 #include <WiFiUdp.h>
+#include <ArduinoHttpClient.h>
 
 /*** TODOS
  * [ ] Check WIFI standards for sending HTTP requests 
@@ -11,25 +12,25 @@
  * [ ] Choose whether to do a debounced hold-down-rotary-encoder control system
 */
 
-
 /*------------ Wifi Setup -----------*/
 
 // Define these in secrets.h
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
-WiFiUDP Udp;
-const unsigned int localPort = 8080;  // local port to listen for UDP packets (here's where we send the packets)
+const unsigned int localPort = 8080;  
 
 /*------------ Encoder Setup -----------*/
 int debounceDelay = 5;
+int sendDelay = 500;
 
 /*------ Encoder A -------*/
 const int encoderA_pin1 = 2;
 const int encoderA_pin2 = 3;
 const int encoderA_buttonPin = 14;
 
-int encoderA_oldPosition = 0;
+int encoderA_lastSentPosition = 0;
+unsigned long encoderA_lastChangeAt = 0;
 int encoderA_position = 0;
 int encoderA_lastButtonState = LOW;
 EncoderStepCounter encoderA(encoderA_pin1, encoderA_pin2);
@@ -39,7 +40,8 @@ const int encoderB_pin1 = 10;
 const int encoderB_pin2 = 11;
 const int encoderB_buttonPin = 15;
 
-int encoderB_oldPosition = 0;
+int encoderB_lastSentPosition = 0;
+unsigned long encoderB_lastChangeAt = 0;
 int encoderB_position = 0;
 int encoderB_lastButtonState = LOW;
 EncoderStepCounter encoderB(encoderB_pin1, encoderB_pin2);
@@ -85,10 +87,6 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  Serial.println("Starting UDP");
-  Udp.begin(localPort);
-  Serial.print("Local port: ");
-
   Serial.println(localPort);
 }
 
@@ -111,12 +109,18 @@ void handleEncoderA() {
     encoderA_lastButtonState = buttonState;
 
     int position = encoderA.getPosition();
+    unsigned long now = millis();
     encoderA.reset();
 
     if (position != 0) {
         encoderA_position += position;
         Serial.print("A: ");
         Serial.println(encoderA_position);
+        encoderA_lastChangeAt = now;
+    } else if ((now > (encoderA_lastChangeAt + sendDelay)) && (encoderA_position != encoderA_lastSentPosition)) { // should only send if encoder has stopped moving
+        Serial.print("SENDING A: ");
+        Serial.println(encoderA_position);
+        encoderA_lastSentPosition = encoderA_position;
     }
 }
 
