@@ -43,6 +43,7 @@ void setup() {
 /*------------ Main Loop -----------*/
 void loop() {
     handleEncoderA();
+    handleEncoderB();
 }
 
 /*------------ Handlers -----------*/
@@ -68,6 +69,31 @@ void handleEncoderA() {
         Serial.print("A: ");
         Serial.println(position);
         encoderA_oldPosition = position;
+    }
+}
+
+void handleEncoderB() {
+    int position = encoderB.getPosition();
+    int buttonState = digitalRead(encoderB_buttonPin);
+    if (buttonState != encoderB_lastButtonState) {
+        delay(debounceDelay);
+        if (buttonState == LOW) {
+            Serial.print("pressed B at ");
+            Serial.println(position);
+        }
+    }
+
+    encoderB_lastButtonState = buttonState;
+
+    if (position % 24 == 0) {
+        encoderB.reset();
+        position = encoderB.getPosition();
+    }
+
+    if (position != encoderB_oldPosition) {
+        Serial.print("B: ");
+        Serial.println(position);
+        encoderB_oldPosition = position;
     }
 }
 
