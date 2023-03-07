@@ -1,0 +1,2 @@
+# ignore all secrets.h files
+*secrets.h
