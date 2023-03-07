@@ -3,6 +3,15 @@
 #include <WiFiNINA.h>  //for Nano IOT 33
 #include <WiFiUdp.h>
 
+/*** TODOS
+ * [ ] Check WIFI standards for sending HTTP requests 
+ * [ ] Map encoder positions to a color/value for Hue input 
+ * [ ] Create a "send" function that only sends requests after certain delay 
+ * [ ] Would be cool to use haptic feedback to tell you when you've hit the top/bottom. 
+ * [ ] Choose whether to do a debounced hold-down-rotary-encoder control system
+*/
+
+
 /*------------ Wifi Setup -----------*/
 
 // Define these in secrets.h
@@ -21,6 +30,7 @@ const int encoderA_pin2 = 3;
 const int encoderA_buttonPin = 14;
 
 int encoderA_oldPosition = 0;
+int encoderA_position = 0;
 int encoderA_lastButtonState = LOW;
 EncoderStepCounter encoderA(encoderA_pin1, encoderA_pin2);
 
@@ -30,6 +40,7 @@ const int encoderB_pin2 = 11;
 const int encoderB_buttonPin = 15;
 
 int encoderB_oldPosition = 0;
+int encoderB_position = 0;
 int encoderB_lastButtonState = LOW;
 EncoderStepCounter encoderB(encoderB_pin1, encoderB_pin2);
 
@@ -89,52 +100,45 @@ void loop() {
 
 /*------------ Handlers -----------*/
 void handleEncoderA() {
-    int position = encoderA.getPosition();
     int buttonState = digitalRead(encoderA_buttonPin);
     if (buttonState != encoderA_lastButtonState) {
         delay(debounceDelay);
         if (buttonState == LOW) {
             Serial.print("pressed A at ");
-            Serial.println(position);
+            Serial.println(encoderA_position);
         }
     }
-
     encoderA_lastButtonState = buttonState;
 
-    if (position % 24 == 0) {
-        encoderA.reset();
-        position = encoderA.getPosition();
-    }
+    int position = encoderA.getPosition();
+    encoderA.reset();
 
-    if (position != encoderA_oldPosition) {
+    if (position != 0) {
+        encoderA_position += position;
         Serial.print("A: ");
-        Serial.println(position);
-        encoderA_oldPosition = position;
+        Serial.println(encoderA_position);
     }
 }
 
 void handleEncoderB() {
-    int position = encoderB.getPosition();
     int buttonState = digitalRead(encoderB_buttonPin);
     if (buttonState != encoderB_lastButtonState) {
         delay(debounceDelay);
         if (buttonState == LOW) {
             Serial.print("pressed B at ");
-            Serial.println(position);
+            Serial.println(encoderB_position);
         }
     }
 
     encoderB_lastButtonState = buttonState;
 
-    if (position % 24 == 0) {
-        encoderB.reset();
-        position = encoderB.getPosition();
-    }
+    int position = encoderB.getPosition();
+    encoderB.reset();
 
-    if (position != encoderB_oldPosition) {
+    if (position != 0) {
+        encoderB_position += position;
         Serial.print("B: ");
-        Serial.println(position);
-        encoderB_oldPosition = position;
+        Serial.println(encoderB_position);
     }
 }
 
