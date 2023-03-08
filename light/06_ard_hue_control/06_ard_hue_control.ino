@@ -5,7 +5,7 @@
 #include <ArduinoHttpClient.h>
 
 /*** TODOS
- * [ ] Check WIFI standards for sending HTTP requests 
+ * [x] Check WIFI standards for sending HTTP requests 
  * [ ] Map encoder positions to a color/value for Hue input 
  * [x] Create a "send" function that only sends requests after certain delay 
  * [ ] Would be cool to use haptic feedback to tell you when you've hit the top/bottom. 
@@ -18,7 +18,14 @@
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
-const unsigned int localPort = 8080;  
+char serverAddress[] = "172.22.151.226";  // IP address of the HUE bridge
+String hueUserName = HUE_USERNAME;
+const char path[] = "/api/ZAgWUA-mrphififtLRGrBVgUvpaCIjUrDRCqMMJY/lights/25/state";
+const int lightNum = 25;
+
+WiFiClient wifi;
+HttpClient client = HttpClient(wifi, serverAddress);
+int status = WL_IDLE_STATUS;
 
 /*------------ Encoder Setup -----------*/
 int debounceDelay = 5;
@@ -86,8 +93,6 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
-  Serial.println(localPort);
 }
 
 /*------------ Main Loop -----------*/
@@ -104,8 +109,8 @@ void handleButtonA() {
     if (buttonState != encoderA_lastButtonState) {
         delay(debounceDelay);
         if (buttonState == LOW) {
-            Serial.print("pressed A at ");
-            Serial.println(encoderA_position);
+            // sendHttpOn();
+            sendRequest(lightNum, "on", "true");
         }
     }
     encoderA_lastButtonState = buttonState;
@@ -116,8 +121,8 @@ void handleButtonB() {
     if (buttonState != encoderB_lastButtonState) {
         delay(debounceDelay);
         if (buttonState == LOW) {
-            Serial.print("pressed B at ");
-            Serial.println(encoderB_position);
+            // sendHttpOff();
+            sendRequest(lightNum, "on", "false");
         }
     }
     encoderB_lastButtonState = buttonState;
@@ -163,4 +168,69 @@ void interruptA() {
 
 void interruptB() {
     encoderB.tick();
+}
+
+void sendHttpOn() {
+    Serial.println("Sending on");
+    String contentType = "application/json";
+    String putData = "{\"on\":true}";
+    client.put(path, contentType, putData);
+
+    // read the status code and body of the response
+    int statusCode = client.responseStatusCode();
+    Serial.print( "Status code: " );
+    Serial.println( statusCode );
+    String response = client.responseBody();
+    Serial.print( "Response: " );
+    Serial.println( response );
+}
+
+void sendHttpOff() {
+    Serial.println("Sending off");
+    String contentType = "application/json";
+    String putData = "{\"on\":false}";
+    client.put(path, contentType, putData);
+
+    // read the status code and body of the response
+    int statusCode = client.responseStatusCode();
+    Serial.print( "Status code: " );
+    Serial.println( statusCode );
+    String response = client.responseBody();
+    Serial.print( "Response: " );
+    Serial.println( response );
+}
+
+void sendRequest(int light, String cmd, String value) {
+  // make a String for the HTTP request path:
+  String request = "/api/" + hueUserName;
+  request += "/lights/";
+  request += light;
+  request += "/state/";
+
+  String contentType = "application/json";
+
+  // make a string for the JSON command:
+  String hueCmd = "{\"" + cmd;
+  hueCmd += "\":";
+  hueCmd += value;
+  hueCmd += "}";
+  // see what you assembled to send:
+  Serial.print("PUT request to server: ");
+  Serial.println(request);
+  Serial.print("JSON command to server: ");
+  Serial.println(hueCmd);
+
+  // make the PUT request to the hub:
+  client.put(request, contentType, hueCmd);
+  
+  // read the status code and body of the response
+  int statusCode = client.responseStatusCode();
+  String response = client.responseBody();
+
+  Serial.println(hueCmd);
+  Serial.print("Status code from server: ");
+  Serial.println(statusCode);
+  Serial.print("Server response: ");
+  Serial.println(response);
+  Serial.println();
 }
