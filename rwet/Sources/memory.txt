@@ -1,0 +1,44 @@
+Retrieval-induced forgetting (RIF) is a memory phenomenon 
+where remembering causes forgetting of other information in memory. 
+The phenomenon was first demonstrated in 1994, although the concept of 
+RIF has been previously discussed in the context of retrieval inhibition.
+
+RIF is demonstrated through a three-phase experiment consisting of study, 
+practice of some studied material, and a final test of all studied material. 
+Such experiments have also used multiple kinds of final tests including 
+recall using only category cues, recall using category and word stems, 
+and recognition tests. The effect has been produced using many 
+different kinds of materials, can be produced in group settings, 
+and is reduced in special clinical populations.
+
+Although RIF occurs as a consequence of conscious remembering through explicit retrieval, the actual forgetting is thought to occur implicitly, below the level of awareness. Cognitive psychologists continue to debate why RIF occurs, and how it relates to the larger picture of memory and general cognition. In particular, researchers are divided on the idea of whether the forgetting is caused by a process that actively inhibits information, or due to interference from other information in memory. Inhibition associated with RIF has been looked at as similar to forms of physical inhibition. RIF has also been tied to memory retrieval strategies, with disrupting such strategies affecting the phenomenon.
+
+RIF has been shown in retrieval-practice paradigm experiments, with exact instructions and procedures varying slightly from experiment to experiment. In the original version of the experiment,[5] booklets were used to present stimuli and to complete testing. Since then this procedure has often been done using computer software such as Microsoft PowerPoint or E-Prime.[10] The experiments typically consist of study, retrieval-practice, and test phases.[4]
+
+Study phase[edit]
+In the study phase, participants are asked to study word pairs that consist of a category name and a word that belongs to that category, an example being FRUIT–orange. Typically multiple word pairs across a number of categories, say 48 items divided equally into 8 categories, are used. Among several others, participants might study word pairs such as the following:[4]
+
+METAL–iron
+TREE–birch
+METAL–silver
+TREE–elm
+Retrieval-practice phase[edit]
+A subset of the items are tested using a fill-in-the-blank test. For a given item, the participant is shown the category name and the first two letters of a studied word from that category (e.g. METAL–ir______). Participants are instructed to fill in the blank with an appropriate studied word from that category. Participants will typically practice remembering the items multiple times.[4][11] The retrieval-practice phase splits items into three different types that are of interest during the final test, and are often denoted using the following notation:[4]
+
+
+Diagram describing dependent variables and hypothetical average recall at final test in the retrieval practice paradigm for different item types. These items are different based on 1) whether they were practiced or unpracticed and 2) what their relationship is to practiced items.
+Practiced items (Rp+ items) are studied words that participants attempt to remember during retrieval practice.
+Unpracticed–related items (Rp- items) are studied words that are not practiced, but related (by category) to words that were practiced.
+Unpracticed–unrelated items (NRp items) are studied words in categories that are never practiced. These categories are typically unrelated to practiced categories. These items also serve as a baseline to compare to unpracticed–related items.
+Test phase[edit]
+After retrieval practice, participants are given a final test, where they are asked to remember all studied items. The goal of the test phase is to assess whether prior retrieval practice affects how well the unpracticed–related words are remembered compared to the unpracticed–unrelated words. RIF is ultimately measured as the difference between the proportion of items recalled between these two types.[4]
+
+In a category-cued test, one studied category is shown at a time and participants are asked to remember all studied items from that category. Although a set amount of time is given for each category, the exact amount of time varies across studies. For instance, Anderson and co-researchers, in 1994, gave participants 30 seconds for each category cue (and given that there were 6 words in each category, this meant that participants had 5 seconds, on average, to remember each item). Other studies have used longer durations.[12][13]
+
+Category-plus-stem-cued tests add a word stem to the category cue. Typically, for each category, participants are given a specific number of letters corresponding to a unique studied word from the category. Because these cues are specific to a particular word, participants are given relatively less time to respond to each cue compared to category-cued tests. Response times for each cue vary from study to study, although many experiments have used an interval of 10 seconds,[14] though some studies have reported using response times as few as 3 seconds.[15] Typically, category-plus-stem-cued tests include only the first initial letter from the word,[11][16] but some have included multiple letters.[5][10]
+
+Recognition tests do not require participants to produce a word from memory. Instead participants are literally shown a word, and are asked to report whether it was a word that appeared during the study phase. Recognition tests typically show all of the studied words and a number of non-studied words, the lures. Researchers measure how often participants correctly recognize studied items, and how often they incorrectly recognize lures. The difference between these two proportions is a statistic measuring one's ability to discriminate between studied and non-studied items, and has been used to represent RIF.[17][18] Reaction time is also used to represent RIF, where slower reaction times are thought to represent more RIF due to difficulty in recognizing the studied item.[17][19]
+
+Many instances of forgetting are often accounted to the interference from heightened accessibility of other, associated information in memory. Researchers have described how interference may explain RIF in a number of ways. For instance the theory of blocking suggests that because practiced words are more easily remembered at test, they may occupy a "response channel" in memory and effectively prevent unpracticed–related words in memory from being remembered. Unpracticed–unrelated words would be less affected by this blocking effect because retrieval of practiced words would not block items from different categories.[5][39] Other theories such as resource diffusion and response decrement are similar to blocking. These theories describe retrieval processes as a finite set of resources that cannot be distributed adequately enough to unpracticed–related items at test.[5]
+
+Other models of interference have been proposed that more precisely define the idea of an item's strength in memory through separating the strength of item itself in memory and the contextual information it is linked to.[40][41] Such models may explain why certain strengthening methods predict RIF and others do not.[42]

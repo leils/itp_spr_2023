@@ -32,6 +32,7 @@ int debounceDelay = 5;
 int sendDelay = 500;
 
 /*------ Encoder A -------*/
+/* Encoder A controls brightness, button turns on the lamp*/
 const int encoderA_pin1 = 2;
 const int encoderA_pin2 = 3;
 const int encoderA_buttonPin = 14;
@@ -41,6 +42,10 @@ unsigned long encoderA_lastChangeAt = 0;
 int encoderA_position = 0;
 int encoderA_lastButtonState = LOW;
 EncoderStepCounter encoderA(encoderA_pin1, encoderA_pin2);
+
+const int minBrightness = 1;
+const int maxBrightness = 254;
+const int brightnessStep = 5;
 
 /*------ Encoder B -------*/
 const int encoderB_pin1 = 10;
@@ -97,10 +102,11 @@ void setup() {
 
 /*------------ Main Loop -----------*/
 void loop() {
-    handleButtonA();
-    handleButtonB();
     handleEncoderA();
     handleEncoderB();
+
+    handleButtonA();
+    handleButtonB();
 }
 
 /*------------ Handlers -----------*/
@@ -109,7 +115,6 @@ void handleButtonA() {
     if (buttonState != encoderA_lastButtonState) {
         delay(debounceDelay);
         if (buttonState == LOW) {
-            // sendHttpOn();
             sendRequest(lightNum, "on", "true");
         }
     }
@@ -121,7 +126,6 @@ void handleButtonB() {
     if (buttonState != encoderB_lastButtonState) {
         delay(debounceDelay);
         if (buttonState == LOW) {
-            // sendHttpOff();
             sendRequest(lightNum, "on", "false");
         }
     }
@@ -132,15 +136,18 @@ void handleEncoderA() {
     int position = encoderA.getPosition();
     unsigned long now = millis();
     encoderA.reset();
+    //Serial.println(position);
 
     if (position != 0) {
-        encoderA_position += position; // Update global A position
+        encoderA_position += (position * brightnessStep); // Update global A position
+        encoderA_position = constrain(encoderA_position, minBrightness, maxBrightness);
         Serial.print("A: ");
         Serial.println(encoderA_position);
         encoderA_lastChangeAt = now; // Log last change time
     } else if ((now > (encoderA_lastChangeAt + sendDelay)) && (encoderA_position != encoderA_lastSentPosition)) { // Send only if change stable for .5 seconds
         Serial.print("SENDING A: ");
         Serial.println(encoderA_position);
+        sendRequest(lightNum, "bri", String(encoderA_position));
         encoderA_lastSentPosition = encoderA_position;  //  Log last send value
     }
 }
@@ -148,7 +155,6 @@ void handleEncoderA() {
 void handleEncoderB() {
     int position = encoderB.getPosition();
     unsigned long now = millis();
-    encoderB.reset();
 
     if (position != 0) {
         encoderB_position += position;
@@ -159,7 +165,10 @@ void handleEncoderB() {
         Serial.print("SENDING B: ");
         Serial.println(encoderB_position);
         encoderB_lastSentPosition = encoderB_position;  //  Log last send value
+
     }
+
+    encoderB.reset();
 }
 
 void interruptA() {
@@ -168,36 +177,6 @@ void interruptA() {
 
 void interruptB() {
     encoderB.tick();
-}
-
-void sendHttpOn() {
-    Serial.println("Sending on");
-    String contentType = "application/json";
-    String putData = "{\"on\":true}";
-    client.put(path, contentType, putData);
-
-    // read the status code and body of the response
-    int statusCode = client.responseStatusCode();
-    Serial.print( "Status code: " );
-    Serial.println( statusCode );
-    String response = client.responseBody();
-    Serial.print( "Response: " );
-    Serial.println( response );
-}
-
-void sendHttpOff() {
-    Serial.println("Sending off");
-    String contentType = "application/json";
-    String putData = "{\"on\":false}";
-    client.put(path, contentType, putData);
-
-    // read the status code and body of the response
-    int statusCode = client.responseStatusCode();
-    Serial.print( "Status code: " );
-    Serial.println( statusCode );
-    String response = client.responseBody();
-    Serial.print( "Response: " );
-    Serial.println( response );
 }
 
 void sendRequest(int light, String cmd, String value) {
